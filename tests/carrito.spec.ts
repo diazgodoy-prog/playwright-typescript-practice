@@ -1,25 +1,28 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+import { InventoryPage } from '../pages/InventoryPage';
+import { CartPage } from '../pages/CartPage';
 
-
-test('agregar productos al carrito', async ({ page }) => {
+test('agregar producto al carrito', async ({ page }) => {
   // login
-  await page.goto('https://www.saucedemo.com/');
-  // coloca nombre de usuario y contraseña válidos
-  await page.locator('#user-name').fill('standard_user');
-  await page.locator('#password').fill('secret_sauce');
-    // hace clic en el botón de inicio de sesión 
-  await page.locator('#login-button').click();
+    const loginPage = new LoginPage(page);
+    const inventoryPage = new InventoryPage(page); 
+    const cartPage = new CartPage(page);
+
+    await loginPage.goto ();
+    await loginPage.login('standard_user', 'secret_sauce');
+ 
     // valida si ya esta en la página siguiente y si tiene el titulo correcto
-  await expect (page).toHaveURL(/inventory.html/);
-  // agrega productos al carro de compras 
-  await page.locator('data-test=add-to-cart-sauce-labs-backpack').click();
-  await page.locator('data-test=add-to-cart-sauce-labs-onesie').click();
-  // valida el contador del carro de compras
-  await expect (page.locator('.shopping_cart_badge')).toHaveText('2');
-  // ir al carrito de compras 
-  await page.locator('.shopping_cart_link').click();
-  await expect (page).toHaveURL(/cart.html/);
+    await expect (page).toHaveURL(/inventory.html/);
+    // agrega productos al carro de compras 
+    await inventoryPage.addProductToCart('sauce-labs-backpack');
+    await inventoryPage.addProductToCart('sauce-labs-onesie');
+    // valida el contador del carro de compras
+    await expect (inventoryPage.cartBadge).toHaveText('2');
+    // ir al carrito de compras 
+    await inventoryPage.goToCart();
+    await expect (page).toHaveURL(/cart.html/);
   // validar los productos agregados al carro de compras 
-  await expect (page.locator('.inventory_item_name').nth(0)).toHaveText('Sauce Labs Backpack');
-  await expect (page.locator('.inventory_item_name').nth(1)).toHaveText('Sauce Labs Onesie');
+    await expect (page.locator('.inventory_item_name').first()).toHaveText('Sauce Labs Backpack');
+    await expect (page.locator('.inventory_item_name').nth(1)).toHaveText('Sauce Labs Onesie');
 }); 
