@@ -250,3 +250,18 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* ===== Migas de pan, ubicación, aplicaciones y preguntas frecuentes ===== */
+.breadcrumbs { grid-column: 1 / -1; font-size: .9rem; color: var(--muted); margin-bottom: 1rem; }
+.breadcrumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: .3rem; padding: 0; margin: 0; }
+.breadcrumbs li + li::before { content: "›"; margin-right: .3rem; }
+.breadcrumbs a { color: inherit; }
+.product__location { display: flex; align-items: center; gap: .4rem; margin: -.5rem 0 1.5rem; color: var(--muted); }
+.product__location svg { color: #c0392b; flex: none; }
+.about p, .about li { color: var(--muted); }
+.about ul { padding-left: 1.2rem; }
+.about li { margin-bottom: .4rem; }
+.faq details { border-bottom: 1px solid #eee; padding: .8rem 0; }
+.faq details:last-child { border-bottom: 0; }
+.faq summary { cursor: pointer; font-weight: 700; list-style-position: outside; }
+.faq details p { margin: .6rem 0 0; color: var(--muted); }

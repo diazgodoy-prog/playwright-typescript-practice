@@ -1,54 +1,13 @@
 'use strict';
 
 /* =====================================================================
- * Datos — edita aquí precios, textos y productos.
+ * Configuración
+ * Los textos y precios del equipo están en index.html (para que Google los lea).
+ * Aquí solo va lo que no se ve en la página.
  * ===================================================================== */
 const WHATSAPP_NUMBER = ''; // ej: '56912345678' (vacío = WhatsApp elige el contacto)
 const IVA = 0.19;
-
-const PRODUCT = {
-  id: 'megger-vlf-sinus-62kv',
-  brand: 'Megger',
-  model: 'Sinus 62',
-  name: 'Megger VLF Sinus 62kV + Tangente Delta',
-  description:
-    'El Megger VLF Sinus 62 kV es un sistema portátil de pruebas de muy baja frecuencia (VLF) ' +
-    'diseñado para cables de media tensión, con capacidades avanzadas de diagnóstico e ' +
-    'interpretación automática de resultados',
-  pricePerDay: 1000000,
-  guarantee: 60000000,
-  calibrated: true,
-  shipping: false,
-  images: ['open', 'closed', 'front', 'side'],
-  specs: [
-    ['Tensión de salida máxima', '62 kV pico (44 kVrms)'],
-    ['Forma de onda', 'Senoidal VLF'],
-    ['Frecuencia de prueba', '0,01 – 0,1 Hz'],
-    ['Diagnóstico', 'Tangente Delta (TD) integrada'],
-    ['Aplicación', 'Cables de media tensión'],
-    ['Interpretación', 'Automática de resultados'],
-  ],
-};
-
-const RELATED = [
-  { id: 'detector-alto-voltaje', name: 'Detector de Alto Voltaje sin Contacto', pricePerDay: 39000, img: 'probe' },
-  { id: 'medidor-rigidez-dielectrica', name: 'Medidor de Rigidez Dieléctrica de Aceite', pricePerDay: 450000, img: 'tester' },
-  { id: 'megohmetro-aemc-1060', name: 'Probador de Aislación Megóhmetro AEMC 1060 1kV', pricePerDay: 60000, img: 'case' },
-  { id: 'megohmetro-5kv', name: 'Probador de Aislación Megóhmetro 5kV', pricePerDay: 80000, img: 'case' },
-  { id: 'pinza-amperimetrica', name: 'Pinza Amperimétrica True RMS 1000A', pricePerDay: 25000, img: 'clamp' },
-];
-
-const CATEGORIES = [
-  { name: 'Pruebas Eléctricas', items: ['Equipos VLF', 'Megóhmetros', 'Detectores de tensión', 'Rigidez dieléctrica', 'Telurómetros'] },
-  { name: 'Solar', items: ['Trazadores de curva I-V', 'Medidores de irradiancia'] },
-  { name: 'Análisis de Energía', items: ['Analizadores de redes', 'Pinzas amperimétricas', 'Registradores'] },
-  { name: 'Automatización Industrial', items: ['Calibradores de procesos', 'Comunicadores HART'] },
-  { name: 'Gas SF₆', items: ['Analizadores de SF₆', 'Detectores de fuga'] },
-  { name: 'Termografía', items: ['Cámaras termográficas', 'Termómetros infrarrojos'] },
-  { name: 'Otras Categorías', items: ['Accesorios', 'Seguridad eléctrica'] },
-  { name: 'Capacitaciones' },
-  { name: 'Blog' },
-];
+const GALLERY = ['open', 'closed', 'front', 'side'];
 
 /* =====================================================================
  * Ilustraciones SVG (reemplázalas por <img src="..."> con fotos reales)
@@ -145,28 +104,28 @@ function toast(msg) {
 }
 
 /* =====================================================================
+ * Datos leídos desde el HTML
+ * ===================================================================== */
+const productEl = $('[data-test="product"]');
+const PRODUCT = {
+  id: productEl.dataset.id,
+  name: $('[data-test="product-title"]').textContent.trim(),
+  pricePerDay: Number(productEl.dataset.pricePerDay),
+};
+
+const RELATED = [...document.querySelectorAll('[data-test="related-card"]')].map((card) => ({
+  id: card.dataset.id,
+  name: $('.prod-card__name', card).textContent.trim(),
+  pricePerDay: Number(card.dataset.pricePerDay),
+  img: card.dataset.img,
+  card,
+}));
+
+/* =====================================================================
  * Producto principal
  * ===================================================================== */
-function renderProduct() {
-  $('[data-test="product-brand"] span').textContent = PRODUCT.brand;
-  $('[data-test="product-model"] span').textContent = PRODUCT.model;
-  $('[data-test="product-title"]').textContent = PRODUCT.name;
-  $('[data-test="product-description"]').textContent = PRODUCT.description;
-  $('[data-test="price-per-day"]').textContent = clp(PRODUCT.pricePerDay);
-  $('[data-test="guarantee"] b').textContent = clp(PRODUCT.guarantee);
-  $('[data-test="calibration"]').hidden = !PRODUCT.calibrated;
-  $('[data-test="shipping-notice"]').hidden = PRODUCT.shipping;
-
-  $('[data-test="specs-table"] tbody').innerHTML = PRODUCT.specs
-    .map(([k, v]) => `<tr><th scope="row">${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`)
-    .join('');
-
-  updateTotal();
-}
-
 function updateTotal() {
-  const input = $('[data-test="rent-days"]');
-  const days = clampDays(input.value);
+  const days = clampDays($('[data-test="rent-days"]').value);
   $('[data-test="rent-total"]').textContent = clp(PRODUCT.pricePerDay * days);
   return days;
 }
@@ -178,12 +137,12 @@ function renderGallery() {
   const main = $('[data-test="gallery-main"]');
   const thumbs = $('[data-test="gallery-thumbs"]');
 
-  thumbs.innerHTML = PRODUCT.images
+  thumbs.innerHTML = GALLERY
     .map((key, i) => `<button class="thumb" data-test="gallery-thumb" data-index="${i}" aria-label="Ver imagen ${i + 1}">${SVG[key]}</button>`)
     .join('');
 
   const select = (i) => {
-    main.innerHTML = SVG[PRODUCT.images[i]];
+    main.innerHTML = SVG[GALLERY[i]];
     main.dataset.index = i;
     thumbs.querySelectorAll('.thumb').forEach((t, j) => t.setAttribute('aria-current', String(i === j)));
   };
@@ -197,30 +156,17 @@ function renderGallery() {
 /* =====================================================================
  * Complementarios
  * ===================================================================== */
-function renderRelated() {
-  $('[data-test="related-list"]').innerHTML = RELATED.map((p) => `
-    <article class="prod-card" data-test="related-card" data-id="${p.id}">
-      <div class="prod-card__img">${SVG[p.img]}</div>
-      <div class="prod-card__body">
-        <h3 class="prod-card__name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</h3>
-        <p class="prod-card__price">${clp(p.pricePerDay)} + IVA</p>
-        <p class="prod-card__per">Por día de arriendo</p>
-      </div>
-      <button class="btn btn--yellow btn--block" data-test="related-add" data-id="${p.id}">Agregar a Cotización</button>
-    </article>`).join('');
-
-  $('[data-test="related-list"]').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-test="related-add"]');
-    if (!btn) return;
-    const p = RELATED.find((r) => r.id === btn.dataset.id);
-    addToQuote(p, 1);
+function bindRelated() {
+  RELATED.forEach((p) => {
+    $('.prod-card__img', p.card).innerHTML = SVG[p.img] || '';
+    $('[data-test="related-add"]', p.card).addEventListener('click', () => addToQuote(p, 1));
   });
 }
 
 /* =====================================================================
  * Menú, categorías y búsqueda
  * ===================================================================== */
-function renderMenu() {
+function bindMenu() {
   const toggle = $('[data-test="menu-toggle"]');
   const menu = $('[data-test="menu"]');
 
@@ -232,15 +178,7 @@ function renderMenu() {
     if (open) $('[data-test="search-input"]').focus();
   });
 
-  $('[data-test="categories"]').innerHTML = CATEGORIES.map((c, i) => c.items
-    ? `<li class="category">
-         <button class="category__btn" data-test="category" aria-expanded="false" aria-controls="cat-${i}">${c.name}${chevron}</button>
-         <ul class="category__sub" id="cat-${i}" data-test="category-items" hidden>
-           ${c.items.map((it) => `<li><a href="#">${it}</a></li>`).join('')}
-         </ul>
-       </li>`
-    : `<li class="category"><a class="category__link" data-test="category" href="#">${c.name}</a></li>`).join('');
-
+  document.querySelectorAll('.category__btn').forEach((btn) => btn.insertAdjacentHTML('beforeend', chevron));
   $('[data-test="categories"]').addEventListener('click', (e) => {
     const btn = e.target.closest('.category__btn');
     if (!btn) return;
@@ -254,8 +192,7 @@ function renderMenu() {
     const q = $('[data-test="search-input"]').value.trim().toLowerCase();
     const list = $('[data-test="search-results"]');
     if (!q) { list.hidden = true; return; }
-    const catalog = [{ id: PRODUCT.id, name: PRODUCT.name, pricePerDay: PRODUCT.pricePerDay }, ...RELATED];
-    const hits = catalog.filter((p) => p.name.toLowerCase().includes(q));
+    const hits = [PRODUCT, ...RELATED].filter((p) => p.name.toLowerCase().includes(q));
     list.innerHTML = hits.length
       ? hits.map((p) => `<li data-test="search-result"><div class="result"><span>${escapeHtml(p.name)}</span><span class="price">${clp(p.pricePerDay)}/día</span></div></li>`).join('')
       : `<li data-test="search-empty">No encontramos equipos para “${escapeHtml(q)}”.</li>`;
@@ -349,9 +286,9 @@ function bindQuote() {
 }
 
 /* ===================================================================== */
-renderProduct();
+updateTotal();
 renderGallery();
-renderRelated();
-renderMenu();
+bindRelated();
+bindMenu();
 bindQuote();
 renderQuote();
