@@ -24,7 +24,7 @@ npm start
 
 - **Textos y precios** del equipo y de los complementarios: directo en `index.html` (así Google los lee).
   Los precios que usa la cotización están en los atributos `data-price-per-day` y `data-guarantee`.
-- **Nombre de la empresa** ("VoltRent" es inventado): búscalo y reemplázalo en `index.html`, `og-image.png` y `favicon.svg`.
+- **Nombre de la empresa** ("MaaoRent"): búscalo y reemplázalo en `index.html`, `og-image.png` y `favicon.svg`.
 - `WHATSAPP_NUMBER` en `app.js`: tu número (ej. `56912345678`).
 - `SVG` en `app.js`: ilustraciones de ejemplo; reemplázalas por fotos reales.
 - Colores y tipografías: variables en `:root` de `styles.css`.
