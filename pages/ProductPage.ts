@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 export class ProductPage {
   readonly page: Page;
@@ -69,6 +69,10 @@ export class ProductPage {
 
   async openQuote() {
     await this.cartButton.click();
+    await expect(this.quoteDrawer).toHaveClass(/open/);
+    await expect(this.quoteDrawer).toBeVisible();
+    // Espera a que termine cualquier animación del panel antes de interactuar
+    await this.quoteDrawer.evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
   }
 
   async search(text: string) {

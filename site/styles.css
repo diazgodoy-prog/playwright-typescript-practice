@@ -198,10 +198,11 @@ button { font: inherit; cursor: pointer; }
 .drawer {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 50; width: min(420px, 100%);
   background: var(--white); box-shadow: -4px 0 20px rgba(0,0,0,.2);
-  transform: translateX(100%); transition: transform .25s ease; display: flex; flex-direction: column;
+  transform: translateX(100%); visibility: hidden; transition: transform .25s ease, visibility .25s;
+  display: flex; flex-direction: column;
   padding: 1.2rem 1.4rem; overflow-y: auto;
 }
-.drawer.open { transform: none; }
+.drawer.open { transform: none; visibility: visible; }
 .drawer__head { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--yellow); }
 .drawer__head h2 { font-family: var(--font-head); margin: .4rem 0; }
 .drawer__close { background: none; border: 0; font-size: 2.2rem; line-height: 1; }

@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import { ProductPage } from '../pages/ProductPage';
 
 test.describe('Página de arriendo - Megger VLF Sinus 62kV', () => {
+  // Sin animaciones: evita clics sobre el panel mientras se desliza (falla intermitente en Firefox)
+  test.use({ reducedMotion: 'reduce' });
+
   let productPage: ProductPage;
 
   test.beforeEach(async ({ page }) => {
